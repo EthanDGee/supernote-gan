@@ -4,14 +4,13 @@ from src.constants import NOTE_SIZE
 
 
 class Discriminator(nn.Module):
-    def __init__(self, img_channels: int = 3, img_size: tuple = NOTE_SIZE):
+    def __init__(self, img_size: tuple = NOTE_SIZE):
         super(Discriminator, self).__init__()
-        self.img_channels = img_channels
         self.img_size = img_size
 
         # Convolutional layers
         self.conv = nn.Sequential(
-            nn.Conv2d(img_channels, 32, kernel_size=4, stride=2, padding=1),
+            nn.Conv2d(1, 32, kernel_size=4, stride=2, padding=1),
             nn.LeakyReLU(0.2, inplace=True),
             nn.Conv2d(32, 64, kernel_size=4, stride=2, padding=1),
             nn.BatchNorm2d(64),

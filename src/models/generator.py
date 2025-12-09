@@ -4,15 +4,9 @@ from src.constants import NOTE_SIZE, LATENT_SIZE
 
 
 class Generator(nn.Module):
-    def __init__(
-        self,
-        latent_size: int = LATENT_SIZE,
-        img_channels: int = 3,
-        img_size: tuple = NOTE_SIZE,
-    ):
+    def __init__(self, latent_size: int = LATENT_SIZE, img_size: tuple = NOTE_SIZE):
         super(Generator, self).__init__()
         self.latent_dim = latent_size
-        self.img_channels = img_channels
         self.img_size = img_size
 
         self.init_size = (4, 6)
@@ -60,7 +54,7 @@ class Generator(nn.Module):
 
         # Final layer
         self.final = nn.Sequential(
-            nn.Conv2d(16, img_channels, kernel_size=3, stride=1, padding=1), nn.Tanh()
+            nn.Conv2d(16, 1, kernel_size=3, stride=1, padding=1), nn.Tanh()
         )
 
     def forward(self, z):

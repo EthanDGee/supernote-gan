@@ -4,7 +4,6 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torchvision.utils as vutils
-from torch.utils.data import DataLoader
 
 from src.constants import (
     BATCH_SIZE,

@@ -14,7 +14,11 @@ class SupernoteImageDataset(Dataset):
         self.image_size = image_size
 
         self.transforms = transforms.Compose(
-            [transforms.Resize(self.image_size), transforms.ToTensor()]
+            [
+                transforms.Resize(self.image_size),
+                transforms.Grayscale(num_output_channels=1),
+                transforms.ToTensor(),
+            ]
         )
 
         self.image_paths = [
@@ -27,8 +31,6 @@ class SupernoteImageDataset(Dataset):
     def __getitem__(self, idx: int) -> torch.Tensor:
         img_path = self.image_paths[idx]
         image = Image.open(img_path)
-        # TODO: Explore the benifits of black and white
-
         return self.transforms(image)
 
 
