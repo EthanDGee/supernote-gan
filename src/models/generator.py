@@ -1,12 +1,17 @@
 import torch.nn as nn
 
+from src.constants import NOTE_SIZE, LATENT_SIZE
+
 
 class Generator(nn.Module):
     def __init__(
-        self, latent_dim: int = 100, img_channels: int = 3, img_size: tuple = (351, 468)
+        self,
+        latent_size: int = LATENT_SIZE,
+        img_channels: int = 3,
+        img_size: tuple = NOTE_SIZE,
     ):
         super(Generator, self).__init__()
-        self.latent_dim = latent_dim
+        self.latent_dim = latent_size
         self.img_channels = img_channels
         self.img_size = img_size
 
@@ -15,7 +20,7 @@ class Generator(nn.Module):
 
         # Initial dense layer
         self.fc = nn.Linear(
-            latent_dim, self.init_channels * self.init_size[0] * self.init_size[1]
+            latent_size, self.init_channels * self.init_size[0] * self.init_size[1]
         )
 
         # Reshape and batch norm
@@ -75,4 +80,3 @@ class Generator(nn.Module):
         x = self.final(x)
 
         return x
-

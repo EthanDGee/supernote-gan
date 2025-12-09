@@ -1,8 +1,10 @@
 import torch.nn as nn
 
+from src.constants import NOTE_SIZE
+
 
 class Discriminator(nn.Module):
-    def __init__(self, img_channels: int = 3, img_size: tuple = (351, 468)):
+    def __init__(self, img_channels: int = 3, img_size: tuple = NOTE_SIZE):
         super(Discriminator, self).__init__()
         self.img_channels = img_channels
         self.img_size = img_size

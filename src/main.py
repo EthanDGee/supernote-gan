@@ -6,35 +6,45 @@ import torch.optim as optim
 import torchvision.utils as vutils
 from torch.utils.data import DataLoader
 
+from src.constants import (
+    BATCH_SIZE,
+    DEVICE,
+    IMAGES_DIR,
+    LATENT_SIZE,
+    LEARNING_DISCRIM,
+    LEARNING_GENER,
+    NUM_EPOCH,
+    SAVE_DIR,
+    SAVE_INTERVAL,
+)
 from src.dataset.dataloader import create_dataloader
 from src.models.discriminator import Discriminator
 from src.models.generator import Generator
-from src.dataset.constants import IMAGES_DIR
 
 
 class GANTrainer:
     def __init__(
         self,
         images_dir: str = IMAGES_DIR,
-        batch_size: int = 32,
-        latent_dim: int = 100,
-        lr_g: float = 0.0002,
-        lr_d: float = 0.0001,
+        batch_size: int = BATCH_SIZE,
+        latent_size: int = LATENT_SIZE,
+        lr_g: float = LEARNING_GENER,
+        lr_d: float = LEARNING_DISCRIM,
         beta1: float = 0.5,
         beta2: float = 0.999,
-        device: str = "auto",
-        save_dir: str = "checkpoints",
+        device: str = DEVICE,
+        save_dir: str = SAVE_DIR,
     ):
         if device == "auto":
             self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         else:
             self.device = torch.device(device)
-        self.latent_dim = latent_dim
+        self.latent_dim = latent_size
         self.save_dir = Path(save_dir)
         self.save_dir.mkdir(exist_ok=True)
 
         # Initialize models
-        self.generator = Generator(latent_dim=latent_dim).to(self.device)
+        self.generator = Generator(latent_size=latent_size).to(self.device)
         self.discriminator = Discriminator().to(self.device)
 
         # Initialize optimizers
@@ -54,7 +64,7 @@ class GANTrainer:
         )
 
         # Fixed noise for visualization
-        self.fixed_noise = torch.randn(16, latent_dim, device=self.device)
+        self.fixed_noise = torch.randn(16, latent_size, device=self.device)
 
         # Training history
         self.g_losses = []
@@ -135,12 +145,12 @@ class GANTrainer:
 
     def save_losses(self):
         # Save losses to text file
-        with open(self.save_dir / "training_losses.txt", "w") as f:
+        with open(self.save_dir / "training_losses.csv", "w") as f:
             f.write("Iteration,Generator_Loss,Discriminator_Loss\n")
             for i, (g_loss, d_loss) in enumerate(zip(self.g_losses, self.d_losses)):
                 f.write(f"{i},{g_loss:.6f},{d_loss:.6f}\n")
 
-    def train(self, num_epochs: int = 100, save_interval: int = 10):
+    def train(self, num_epochs: int = NUM_EPOCH, save_interval: int = SAVE_INTERVAL):
         print(f"Starting training for {num_epochs} epochs...")
 
         for epoch in range(num_epochs):
@@ -192,32 +202,13 @@ class GANTrainer:
 
 def main():
     # Training configuration
-    config = {
-        "images_dir": "converted/",
-        "batch_size": 32,
-        "latent_dim": 100,
-        "lr_g": 0.0002,
-        "lr_d": 0.0001,
-        "num_epochs": 100,
-        "save_interval": 1,
-        "save_dir": "checkpoints",
-    }
 
     # Create trainer
-    trainer = GANTrainer(
-        **{
-            k: v
-            for k, v in config.items()
-            if k != "num_epochs" and k != "save_interval"
-        }
-    )
+    trainer = GANTrainer()
 
     # Start training
-    trainer.train(
-        num_epochs=config["num_epochs"], save_interval=config["save_interval"]
-    )
+    trainer.train()
 
 
 if __name__ == "__main__":
     main()
-

@@ -5,13 +5,13 @@ from torch.utils.data import Dataset, DataLoader
 import torchvision.transforms.v2 as transforms
 from PIL import Image
 
-from src.dataset.constants import IMAGES_DIR
+from src.constants import IMAGES_DIR, NOTE_SIZE, BATCH_SIZE, NUM_WORKERS
 
 
 class SupernoteImageDataset(Dataset):
-    def __init__(self, images_dir: str = IMAGES_DIR):
+    def __init__(self, images_dir: str = IMAGES_DIR, image_size: tuple = NOTE_SIZE):
         self.images_dir = Path(images_dir)
-        self.image_size = (351, 468)  # 1/4 of the supernote nomad
+        self.image_size = image_size
 
         self.transforms = transforms.Compose(
             [transforms.Resize(self.image_size), transforms.ToTensor()]
@@ -33,9 +33,9 @@ class SupernoteImageDataset(Dataset):
 
 
 def create_dataloader(
-    batch_size: int = 32,
+    batch_size: int = BATCH_SIZE,
     shuffle: bool = True,
-    num_workers: int = 4,
+    num_workers: int = NUM_WORKERS,
     images_dir: str = IMAGES_DIR,
 ) -> DataLoader:
     dataset = SupernoteImageDataset(images_dir)
@@ -51,7 +51,7 @@ def create_dataloader(
 
 if __name__ == "__main__":
     dataloader = create_dataloader(batch_size=4, shuffle=True)
-    # print(f"Found {len(dataloader.dataset)} images")
+    print(f"Found {len(dataloader.dataset)} images")
 
     batch = next(iter(dataloader))
     print(f"Batch shape: {batch.shape}")
